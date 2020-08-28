@@ -2,7 +2,7 @@
 
 ## 1. QC of raw reads with Trimmomatic
 
-The new script `02-trim_raw_reads-SE.sh` looks like this:
+Script `02-trim_raw_reads-SE.sh`:
 ```bash
 #!/bin/bash
 #SBATCH -A XXX
@@ -137,7 +137,7 @@ snpindex -d $GSNAP_GENOME_NAME -D $GSNAP_GENOME_PATH -V $GSNAP_GENOME_PATH/*.map
 
 ### 2.4 Map RNA-seq reads with GSNAP
 
-- The script used for the standard Herring genome is called `03-3-readMapping-gsnap-snpT-SE_A.sh`:
+The script used for the standard Herring genome is called `03-3-readMapping-gsnap-snpT-SE_A.sh`:
 ```bash
 #!/bin/bash
 #SBATCH -A XXX
