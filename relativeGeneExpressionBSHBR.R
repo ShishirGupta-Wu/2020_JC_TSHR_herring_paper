@@ -1,7 +1,7 @@
 #########################################################################################################
 #                                                        
 # R script that creates boxplots corresponding to the relative expression (in counts-per-million) of 
-# 15 genes of interest in brain (BR) and saccus vasculosus (BSH) tissues of 8 Atlantic herring samples
+# 15 genes of interest in brain (BR) and saccus vasculosus (BSH) tissues of 14 Atlantic herring samples
 #
 # The RNA-seq data was mapped to the genome Ch_v.2.0.2 using the aligner GSNAP in SNP-tolerant mode. 
 # Read counts were assigned to genes using the program featureCounts. Raw read counts were normalized 
@@ -9,7 +9,7 @@
 #
 # Created by: Angela P. Fuentes-Pardo, PhD. E-mail: apfuentesp@gmail.com
 # Postdoctoral researcher at Leif Andersson Lab, Uppsala University
-# Created on: 2020-08-07, updated on: 2020-08-26
+# Created on: 2020-01-15, updated on: 2020-08-26
 #                                                        
 #########################################################################################################
 
@@ -198,14 +198,17 @@ dim(logCount_tmm_melt)
 # Load information of genes of interest (gene symbol and ensembl gene id are required) ----------------
 genesOfInterest_df <- read.table(genesOfInterest, header = TRUE, stringsAsFactors = FALSE)
 genesOfInterest_df
+dim(genesOfInterest_df)
+#toKeep <- c("TSHR","RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
+toKeep <- c("RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
+genesOfInterest_df <- genesOfInterest_df[genesOfInterest_df$gene_name %in% toKeep,]
 gene_list <- genesOfInterest_df$ensembl_gene_id  # Save the list of gene ids as a separate vector
-#gene_list <- c("ENSCHAG00000024744","ENSCHAG00000022951","ENSCHAG00000001033","ENSCHAG00000022846","ENSCHAG00000027134","ENSCHAG00000012656","ENSCHAG00000020990","ENSCHAG00000011791","ENSCHAG00000005560","ENSCHAG00000022679","ENSCHAG00000014116","ENSCHAG00000010336","ENSCHAG00000021073")
 
 # Filter dataset to only retain the genes of interest
 logCount_tmm_melt_subset <- logCount_tmm_melt[logCount_tmm_melt$gene_id %in% gene_list, ]
 head(logCount_tmm_melt_subset)
 dim(logCount_tmm_melt_subset)
-#[1] 210   4
+#[1] 196   4
 #[1] 182   4
 
 # Assign the correspondent gene name (symbol) to each gene
@@ -219,8 +222,9 @@ head(logCount_tmm_melt_subset)
 
 # Set the column gene_name as a factor and set the gene order wanted (levels).
 logCount_tmm_melt_subset$gene_name <- factor(logCount_tmm_melt_subset$gene_name, 
-                                             levels = c("TSHR","DIO2","RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
-                                             #levels = c("RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
+                                             #levels = c("TSHR","DIO2","RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
+                                             #levels = c("TSHR","RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
+                                             levels = c("RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
                                              )
 
 # Make the plot
@@ -236,7 +240,7 @@ p <- ggplot(data = logCount_tmm_melt_subset, aes(x = tissue, y = value, fill = t
         text = element_text(size = 20),
         strip.text.x = element_text(size = 19, face = "bold.italic")
         ) + 
-  scale_fill_manual(values = c("#fdcdac", "#cbd5e8")) +  # "#f4cae4" light pink, #b3e2cd" light green, "#bababa" medium gray
+  scale_fill_manual(values = c("#636363", "#bdbdbd")) +  # c("#fdcdac", "#cbd5e8") "#f4cae4" light pink, #b3e2cd" light green, "#bababa" medium gray
   #ggtitle(paste0(geneName, " (", highlightGene, ")")) +
   labs(y = expression(log[2] ~ ("TMM-normalized counts per million")), 
        x = "", 
@@ -246,8 +250,8 @@ p <- ggplot(data = logCount_tmm_melt_subset, aes(x = tissue, y = value, fill = t
 p
 
 # Save the plot as a PDF file.
-pdf(paste0("Comparison_CPM-TMM-normalized-expression_RHO-15genes_Herring_RNAseq_BSHBR_",genomeVersion,"_",alignerName,".pdf"),
-    #paste0("Comparison_CPM-TMM-normalized-expression_RHO-OPSINgenes_Herring_RNAseq_BSHBR_",genomeVersion,"_",alignerName,".pdf"),
+pdf(paste0("Comparison_CPM-TMM-normalized-expression_onlyOPSINgenes_Herring_RNAseq_BSHBR_",genomeVersion,"_",alignerName,".pdf"),
+    #paste0("Comparison_CPM-TMM-normalized-expression_TSHR-OPSINgenes_Herring_RNAseq_BSHBR_",genomeVersion,"_",alignerName,".pdf"),
     #width = 11, height = 8.5, paper = "a4r"
     width = 20, height = 7
 )
@@ -259,3 +263,5 @@ ctmm_subset <- ctmm[rownames(ctmm) %in% gene_list, ]
 dim(ctmm_subset)
 write.table(ctmm_subset, file = paste0("CPM-TMM-normalized-expression_Herring_RNAseq-BSHBR.",genomeVersion,".",alignerName,"_15genes.txt"), 
             quote = FALSE, row.names = TRUE, col.names = NA, sep = "\t")
+
+sessionInfo()
