@@ -199,9 +199,6 @@ dim(logCount_tmm_melt)
 genesOfInterest_df <- read.table(genesOfInterest, header = TRUE, stringsAsFactors = FALSE)
 genesOfInterest_df
 dim(genesOfInterest_df)
-#toKeep <- c("TSHR","RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
-toKeep <- c("RHO","OPN3","OPN4","OPN4a","OPN4xa","OPN4xb","OPN6a","OPN6b","OPN7a","OPN7b","OPN7d","OPN8a","OPN8c")
-genesOfInterest_df <- genesOfInterest_df[genesOfInterest_df$gene_name %in% toKeep,]
 gene_list <- genesOfInterest_df$ensembl_gene_id  # Save the list of gene ids as a separate vector
 
 # Filter dataset to only retain the genes of interest
